@@ -5,7 +5,9 @@ import escapeRegExp from 'escape-string-regexp'
 
 class Books extends Component{
     state = {
-        books:[]
+        currentlyReading:[],
+        wantToRead:[],
+        read:[]
     };
 
     componentDidMount(){
@@ -15,7 +17,18 @@ class Books extends Component{
     handleBookShelf(book,shelf){
         BooksAPI.update(book,shelf).then(()=>this.getBooksShelf());
     }
-
+    renderBookShelf(books,title){
+        return(
+            <div className="bookshelf">
+                <h2 className="bookshelf-title">{title}</h2>
+                <div className="bookshelf-books">
+                    {books.map((book,index)=>
+                    <BooksListDetails key={index} book={book} handleBookShelf={this.handleBookShelf()}/>
+                    )}
+                </div>
+            </div>
+        )
+    }
     render(){
         const currRead = new RegExp(escapeRegExp('currentlyReading'));
         let currentlyReading = this.state.books.filter(book => currRead.test(book.shelf));
@@ -34,20 +47,11 @@ class Books extends Component{
                     <h1>MyReads</h1>
                     </div>
                     <div className="list-books-content">
-                    <div>
-                        <div className="bookshelf">
-                        <h2 className="bookshelf-title">Currently Reading</h2>
-                        <div className="bookshelf-books">
-                            <ol className="books-grid">
-                                <li>
-                                     {currentlyReading.map((book, index) => <BooksListDetail key={index} book={book} />)}
-                                     {wantToRead.map((book, index) => <BooksListDetail key={index} book={book} />)}
-                                     {read.map((book, index) => <BooksListDetail key={index} book={book} />)}
-                                </li>
-                            </ol>
+                        <div>
+                            {this.renderBookShelf(currentlyReading,'Currently Reading')}
+                            {this.renderBookShelf(wantToRead,'Want To Read')}
+                            {this.renderBookShelf(read,'Read')}
                         </div>
-                        </div>
-                    </div>
                     </div>
                     <div className="open-search">
                     <a onClick={() => this.setState({ showSearchPage: true })}>Add a book</a>
