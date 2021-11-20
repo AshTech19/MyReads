@@ -1,7 +1,15 @@
 import React, {Component} from 'react'
 import BooksListDetails from './BooksListDetails'
+import * as BooksAPI from './BooksAPI'
 
 class Books extends Component{
+    state = {
+        books:[]
+    };
+
+    componentDidMount(){
+        BooksAPI.getAll().then(books => this.setState({books}));
+    }
     render(){
         return(
             <div className="list-books">
