@@ -11,6 +11,11 @@ class Books extends Component{
     componentDidMount(){
         BooksAPI.getAll().then(books => this.setState({books}));
     }
+
+    handleBookShelf(book,shelf){
+        BooksAPI.update(book,shelf).then(()=>this.getBooksShelf());
+    }
+
     render(){
         const currRead = new RegExp(escapeRegExp('currentlyReading'));
         let currentlyReading = this.state.books.filter(book => currRead.test(book.shelf));
