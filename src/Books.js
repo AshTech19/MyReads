@@ -1,6 +1,7 @@
 import React, {Component} from 'react'
 import BooksListDetails from './BooksListDetails'
 import * as BooksAPI from './BooksAPI'
+import escapeRegExp from 'escape-string-regexp'
 
 class Books extends Component{
     state = {
@@ -11,6 +12,17 @@ class Books extends Component{
         BooksAPI.getAll().then(books => this.setState({books}));
     }
     render(){
+        const currRead = new RegExp(escapeRegExp('currentlyReading'));
+        let currentlyReading = this.state.books.filter(book => currRead.test(book.shelf));
+  
+        const wantRead = new RegExp(escapeRegExp('wantToRead'));
+        let wantToRead = this.state.books.filter(book => wantRead.test(book.shelf));
+  
+        const Read = new RegExp(escapeRegExp('read'));
+        let read = this.state.books.filter(book => Read.test(book.shelf));
+
+        console.log(read);
+
         return(
             <div className="list-books">
                     <div className="list-books-title">
@@ -23,7 +35,9 @@ class Books extends Component{
                         <div className="bookshelf-books">
                             <ol className="books-grid">
                                 <li>
-                                    <BooksListDetails/>
+                                     {currentlyReading.map((book, index) => <BooksListDetail key={index} book={book} />)}
+                                     {wantToRead.map((book, index) => <BooksListDetail key={index} book={book} />)}
+                                     {read.map((book, index) => <BooksListDetail key={index} book={book} />)}
                                 </li>
                             </ol>
                         </div>
