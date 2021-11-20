@@ -11,11 +11,25 @@ class Books extends Component{
     };
 
     componentDidMount(){
-        BooksAPI.getAll().then(books => this.setState({books}));
+        this.getBooks();
     }
 
+    getBooks(){
+        BooksAPI.getAll().then(books => {
+            const currRead = new RegExp(escapeRegExp('currentlyReading'));
+            let currentlyReading = books ? books.filter(book => currRead.test(book.shelf)) : null;
+    
+            const wantRead = new RegExp(escapeRegExp('wantToRead'));
+            let wantToRead = books ? books.filter(book => wantRead.test(book.shelf)) : null;
+      
+            const Read = new RegExp(escapeRegExp('read'));
+            let read = books ? books.filter(book => Read.test(book.shelf)) : null;
+            
+            this.setState({ currentlyReading, wantToRead, read });
+        });
+    }
     handleBookShelf(book,shelf){
-        BooksAPI.update(book,shelf).then(()=>this.getBooksShelf());
+        BooksAPI.update(book,shelf).then(()=>this.getBooks());
     }
     renderBookShelf(books,title){
         return(
@@ -30,16 +44,7 @@ class Books extends Component{
         )
     }
     render(){
-        const currRead = new RegExp(escapeRegExp('currentlyReading'));
-        let currentlyReading = this.state.books.filter(book => currRead.test(book.shelf));
-  
-        const wantRead = new RegExp(escapeRegExp('wantToRead'));
-        let wantToRead = this.state.books.filter(book => wantRead.test(book.shelf));
-  
-        const Read = new RegExp(escapeRegExp('read'));
-        let read = this.state.books.filter(book => Read.test(book.shelf));
-
-        console.log(read);
+        
 
         return(
             <div className="list-books">
